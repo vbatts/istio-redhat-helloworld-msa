@@ -1,0 +1,48 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: redhat-helloworld-msa
+  annotations:
+    kubernetes.io/ingress.class: "istio"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/gateway
+        backend:
+          serviceName: api-gateway
+          servicePort: 8080  
+      - path: /api/bonjour
+        backend:
+          serviceName: bonjour
+          servicePort: 8080
+      - path: /api/bonjour-chaining
+        backend:
+          serviceName: bonjour
+          servicePort: 8080
+      - path: /api/aloha
+        backend:
+          serviceName: aloha
+          servicePort: 8080
+      - path: /api/aloha-chaining
+        backend:
+          serviceName: aloha
+          servicePort: 8080
+      - path: /api/ola
+        backend:
+          serviceName: ola
+          servicePort: 8080
+      - path: /api/ola-chaining
+        backend:
+          serviceName: ola
+          servicePort: 8080
+      - path: /api/hola
+        backend:
+          serviceName: hola
+          servicePort: 8080
+      - path: /api/hola-chaining
+        backend:
+          serviceName: hola
+          servicePort: 8080
+

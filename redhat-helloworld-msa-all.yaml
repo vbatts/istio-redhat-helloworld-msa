@@ -1,0 +1,296 @@
+##################################################################################################
+#  Aloha
+##################################################################################################
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aloha
+  labels:
+    app: aloha
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: aloha
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: aloha
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: aloha
+        version: "0.0.1"
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTIONS
+          value: -Xmx256m
+        - name: AB_OFF
+          value: ""
+        name:  vertx
+        image: aloha:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+##################################################################################################
+#  Bonjour
+##################################################################################################
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bonjour
+  labels:
+    app: bonjour
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: bonjour
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: bonjour
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bonjour
+        version: "0.0.1"
+    spec:
+      containers:
+      - name:  nodejs
+        image: bonjour:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+##################################################################################################
+#  Hola
+##################################################################################################
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hola
+  labels:
+    app: hola
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: hola
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hola
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hola
+        version: "0.0.1"
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTIONS
+          value: -Xmx256m
+        - name: AB_OFF
+          value: ""
+        name:  wildfly
+        image: hola:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+##################################################################################################
+#  Ola
+##################################################################################################
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ola
+  labels:
+    app: ola
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: ola
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ola
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ola
+        version: "0.0.1"
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTIONS
+          value: -Xmx256m
+        - name: AB_OFF
+          value: ""
+        name:  spring-boot
+        image: ola:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+##################################################################################################
+#  Api Gateway
+##################################################################################################
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: api-gateway
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+        version: "0.0.1"
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTIONS
+          value: -Xmx256m
+        - name: AB_OFF
+          value: ""
+        name:  spring-boot
+        image: api-gateway:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+##################################################################################################
+#  INGRESS Routes
+##################################################################################################
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: redhat-helloworld-msa
+  annotations:
+    kubernetes.io/ingress.class: "istio"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/gateway
+        backend:
+          serviceName: api-gateway
+          servicePort: 8080         
+      - path: /api/bonjour
+        backend:
+          serviceName: bonjour
+          servicePort: 8080
+      - path: /api/bonjour-chaining
+        backend:
+          serviceName: bonjour
+          servicePort: 8080
+      - path: /api/aloha
+        backend:
+          serviceName: aloha
+          servicePort: 8080
+      - path: /api/aloha-chaining
+        backend:
+          serviceName: aloha
+          servicePort: 8080
+      - path: /api/ola
+        backend:
+          serviceName: ola
+          servicePort: 8080
+      - path: /api/ola-chaining
+        backend:
+          serviceName: ola
+          servicePort: 8080
+      - path: /api/hola
+        backend:
+          serviceName: hola
+          servicePort: 8080
+      - path: /api/hola-chaining
+        backend:
+          serviceName: hola
+          servicePort: 8080
+
+
+
