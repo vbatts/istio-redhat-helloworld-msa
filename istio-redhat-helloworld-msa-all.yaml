@@ -5,21 +5,21 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: aloha
+  name: istio-aloha
   labels:
-    app: aloha
+    app: istio-aloha
 spec:
   ports:
   - port: 8080
     name: http
   selector:
-    app: aloha
+    app: istio-aloha
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   creationTimestamp: null
-  name: aloha
+  name: istio-aloha
 spec:
   replicas: 1
   strategy: {}
@@ -32,7 +32,7 @@ spec:
           -w kernel.core_pattern=/tmp/core.%e.%p.%t \u0026\u0026 ulimit -c unlimited"],"command":["/bin/sh"],"image":"alpine","imagePullPolicy":"IfNotPresent","name":"enable-core-dump","securityContext":{"privileged":true}}]'
       creationTimestamp: null
       labels:
-        app: aloha
+        app: istio-aloha
         version: 0.0.1
     spec:
       containers:
@@ -40,7 +40,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xmx256m
         - name: AB_OFF
-        image: aloha:0.0.1
+        image: istio-aloha:0.0.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -89,21 +89,21 @@ status: {}
 apiVersion: v1
 kind: Service
 metadata:
-  name: bonjour
+  name: istio-api-gateway
   labels:
-    app: bonjour
+    app: istio-api-gateway
 spec:
   ports:
   - port: 8080
     name: http
   selector:
-    app: bonjour
+    app: istio-api-gateway
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   creationTimestamp: null
-  name: bonjour
+  name: istio-api-gateway
 spec:
   replicas: 1
   strategy: {}
@@ -116,11 +116,95 @@ spec:
           -w kernel.core_pattern=/tmp/core.%e.%p.%t \u0026\u0026 ulimit -c unlimited"],"command":["/bin/sh"],"image":"alpine","imagePullPolicy":"IfNotPresent","name":"enable-core-dump","securityContext":{"privileged":true}}]'
       creationTimestamp: null
       labels:
-        app: bonjour
+        app: istio-api-gateway
         version: 0.0.1
     spec:
       containers:
-      - image: bonjour:0.0.1
+      - env:
+        - name: JAVA_OPTIONS
+          value: -Xmx256m
+        - name: AB_OFF
+        image: istio-api-gateway:0.0.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+        name: spring-boot
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+        resources: {}
+      - args:
+        - proxy
+        - sidecar
+        - -v
+        - "2"
+        - --passthrough
+        - "8080"
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        image: docker.io/istio/proxy_debug:0.1
+        imagePullPolicy: IfNotPresent
+        name: proxy
+        resources: {}
+        securityContext:
+          runAsUser: 1337
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-bonjour
+  labels:
+    app: istio-bonjour
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: istio-bonjour
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: istio-bonjour
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        alpha.istio.io/sidecar: injected
+        alpha.istio.io/version: jenkins@ubuntu-16-04-build-12ac793f80be71-0.1.6-dab2033
+        pod.beta.kubernetes.io/init-containers: '[{"args":["-p","15001","-u","1337"],"image":"docker.io/istio/init:0.1","imagePullPolicy":"IfNotPresent","name":"init","securityContext":{"capabilities":{"add":["NET_ADMIN"]}}},{"args":["-c","sysctl
+          -w kernel.core_pattern=/tmp/core.%e.%p.%t \u0026\u0026 ulimit -c unlimited"],"command":["/bin/sh"],"image":"alpine","imagePullPolicy":"IfNotPresent","name":"enable-core-dump","securityContext":{"privileged":true}}]'
+      creationTimestamp: null
+      labels:
+        app: istio-bonjour
+        version: 0.0.1
+    spec:
+      containers:
+      - image: istio-bonjour:0.0.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -169,21 +253,21 @@ status: {}
 apiVersion: v1
 kind: Service
 metadata:
-  name: hola
+  name: istio-hola
   labels:
-    app: hola
+    app: istio-hola
 spec:
   ports:
   - port: 8080
     name: http
   selector:
-    app: hola
+    app: istio-hola
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   creationTimestamp: null
-  name: hola
+  name: istio-hola
 spec:
   replicas: 1
   strategy: {}
@@ -196,7 +280,7 @@ spec:
           -w kernel.core_pattern=/tmp/core.%e.%p.%t \u0026\u0026 ulimit -c unlimited"],"command":["/bin/sh"],"image":"alpine","imagePullPolicy":"IfNotPresent","name":"enable-core-dump","securityContext":{"privileged":true}}]'
       creationTimestamp: null
       labels:
-        app: hola
+        app: istio-hola
         version: 0.0.1
     spec:
       containers:
@@ -204,7 +288,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xmx256m
         - name: AB_OFF
-        image: hola:0.0.1
+        image: istio-hola:0.0.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -253,21 +337,21 @@ status: {}
 apiVersion: v1
 kind: Service
 metadata:
-  name: ola
+  name: istio-ola
   labels:
-    app: ola
+    app: istio-ola
 spec:
   ports:
   - port: 8080
     name: http
   selector:
-    app: ola
+    app: istio-ola
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   creationTimestamp: null
-  name: ola
+  name: istio-ola
 spec:
   replicas: 1
   strategy: {}
@@ -280,7 +364,7 @@ spec:
           -w kernel.core_pattern=/tmp/core.%e.%p.%t \u0026\u0026 ulimit -c unlimited"],"command":["/bin/sh"],"image":"alpine","imagePullPolicy":"IfNotPresent","name":"enable-core-dump","securityContext":{"privileged":true}}]'
       creationTimestamp: null
       labels:
-        app: ola
+        app: istio-ola
         version: 0.0.1
     spec:
       containers:
@@ -288,7 +372,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xmx256m
         - name: AB_OFF
-        image: ola:0.0.1
+        image: istio-ola:0.0.1
         imagePullPolicy: IfNotPresent
         name: spring-boot
         ports:
@@ -320,89 +404,6 @@ spec:
           runAsUser: 1337
 status: {}
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: api-gateway
-  labels:
-    app: api-gateway
-spec:
-  ports:
-  - port: 8080
-    name: http
-  selector:
-    app: api-gateway
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  creationTimestamp: null
-  name: api-gateway
-spec:
-  replicas: 1
-  strategy: {}
-  template:
-    metadata:
-      annotations:
-        alpha.istio.io/sidecar: injected
-        alpha.istio.io/version: jenkins@ubuntu-16-04-build-12ac793f80be71-0.1.6-dab2033
-        pod.beta.kubernetes.io/init-containers: '[{"args":["-p","15001","-u","1337"],"image":"docker.io/istio/init:0.1","imagePullPolicy":"IfNotPresent","name":"init","securityContext":{"capabilities":{"add":["NET_ADMIN"]}}},{"args":["-c","sysctl
-          -w kernel.core_pattern=/tmp/core.%e.%p.%t \u0026\u0026 ulimit -c unlimited"],"command":["/bin/sh"],"image":"alpine","imagePullPolicy":"IfNotPresent","name":"enable-core-dump","securityContext":{"privileged":true}}]'
-      creationTimestamp: null
-      labels:
-        app: api-gateway
-        version: 0.0.1
-    spec:
-      containers:
-      - env:
-        - name: JAVA_OPTIONS
-          value: -Xmx256m
-        - name: AB_OFF
-        image: api-gateway:0.0.1
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 10
-        name: spring-boot
-        ports:
-        - containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 10
-        resources: {}
-      - args:
-        - proxy
-        - sidecar
-        - -v
-        - "2"
-        - --passthrough
-        - "8080"
-        env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        image: docker.io/istio/proxy_debug:0.1
-        imagePullPolicy: IfNotPresent
-        name: proxy
-        resources: {}
-        securityContext:
-          runAsUser: 1337
-status: {}
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -417,7 +418,7 @@ spec:
       - path: /api/gateway
         backend:
           serviceName: api-gateway
-          servicePort: 8080         
+          servicePort: 8080  
       - path: /api/bonjour
         backend:
           serviceName: bonjour
@@ -450,7 +451,5 @@ spec:
         backend:
           serviceName: hola
           servicePort: 8080
-
-
 
 ---

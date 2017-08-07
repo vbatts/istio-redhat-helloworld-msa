@@ -1,0 +1,54 @@
+:linkattrs:
+= Red Hat Hello World MSA - Service Mesh
+
+This demo is a *Service Mesh* based implementation of the original
+https://cdn.rawgit.com/redhat-helloworld-msa/helloworld-msa/master/readme.html[Red Hat Hello World MSA].
+
+In this demo we will use https://istio.io[Istio] as the Service Mesh framework
+
+== Pre-Requisites
+
+* https://istio.io[Istio] is deployed and configured on the Kubernetes Cluster
+
+The following applications are built and the corresponding docker images are available:
+
+* https://github.com/redhat-developer-demos/istio-api-gateway[Api Gateway]
+* https://github.com/redhat-developer-demos/istio-bonjour[Bonjour]
+* https://github.com/redhat-developer-demos/istio-aloha[Aloha]
+* https://github.com/redhat-developer-demos/istio-hola[Hola]
+* https://github.com/redhat-developer-demos/istio-ola[Ola]
+
+[NOTE]
+====
+Each of the above mentioned applications has a README file called _Istio_README.adoc_ which gives details of building
+and deploying the application
+====
+
+== Deploying
+
+If the docker image of the application is already available, the you can run the following commands to deploy them.
+
+[NOTE]
+====
+The version of the application used is *0.0.1* if you have different tags then please edit
+link:./redhat-helloworld-msa-all.yaml[redhat-helloworld-msa-all.yaml] to match the right tag
+====
+
+=== All in One Deployment
+
+[code,sh]
+----
+istioctl kube-inject -f redhat-helloworld-msa-all.yaml -o istio-redhat-helloworld-msa-all.yaml <1>
+kubectl apply -f istio-redhat-helloworld-msa-all.yaml <2>
+----
+
+<1> This does update the kubernetes manifests the _kube-inject_ i.e. injecting the Istio related init-containers and
+sidecars in to the kubernetes deployment yaml found in link:.redhat-helloworld-msa-all.yaml[redhat-helloworld-msa-all.yaml]
+<2> Deploying application on to Kubernetes
+
+[NOTE]
+====
+There is also a pre-configured link:./istio-redhat-helloworld-msa-all.yaml[istio-redhat-helloworld-msa-all.yaml] which can be used
+via `kubectl apply -f istio-redhat-helloworld-msa-all.yaml` to deploy all the applications together. This is just a convinience
+if you dont want to do kube-inject done in previous step
+====
