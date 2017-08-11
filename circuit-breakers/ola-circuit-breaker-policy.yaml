@@ -1,0 +1,25 @@
+---
+type: route-rule
+name: ola-default-route
+spec:
+  destination: ola.default.svc.cluster.local
+  precedence: 1
+  route:
+  - tags:
+      version: "0.0.2"
+    weight: 100
+
+---
+type: destination-policy
+name: ola-default-cb
+spec:
+  destination: ola.default.svc.cluster.local
+  policy:
+  - tags:
+      version: "0.0.2"
+    circuitBreaker:
+      simpleCb:
+        maxConnections: 1
+        httpMaxRequestsPerConnection: 1
+        sleepWindow: 30s
+        httpDetectionInterval: 1m

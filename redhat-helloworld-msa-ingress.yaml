@@ -11,38 +11,42 @@ spec:
       paths:
       - path: /api/gateway
         backend:
-          serviceName: istio-api-gateway
-          servicePort: 8080  
+          serviceName: api-gateway
+          servicePort: 8080
       - path: /api/bonjour
         backend:
-          serviceName: istio-bonjour
+          serviceName: bonjour
           servicePort: 8080
       - path: /api/bonjour-chaining
         backend:
-          serviceName: istio-bonjour
-          servicePort: 8080
-      - path: /api/aloha
-        backend:
-          serviceName: istio-aloha
-          servicePort: 8080
-      - path: /api/aloha-chaining
-        backend:
-          serviceName: istio-aloha
+          serviceName: bonjour
           servicePort: 8080
       - path: /api/ola
         backend:
-          serviceName: istio-ola
+          serviceName: ola
           servicePort: 8080
       - path: /api/ola-chaining
         backend:
-          serviceName: istio-ola
+          serviceName: ola
+          servicePort: 8080
+      - path: /api/ola-long
+        backend:
+          serviceName: ola
           servicePort: 8080
       - path: /api/hola
         backend:
-          serviceName: istio-hola
+          serviceName: hola
           servicePort: 8080
       - path: /api/hola-chaining
         backend:
-          serviceName: istio-hola
+          serviceName: hola
+          servicePort: 8080
+      - path: /api/aloha
+        backend:
+          serviceName: aloha
+          servicePort: 8080
+      - path: /api/aloha-chaining
+        backend:
+          serviceName: aloha
           servicePort: 8080
 
