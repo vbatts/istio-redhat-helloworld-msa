@@ -12,11 +12,11 @@ In this demo we will use https://istio.io[Istio] as the Service Mesh framework
 
 The following applications are built and the corresponding docker images are available:
 
-* https://github.com/redhat-developer-demos/istio-api-gateway[Api Gateway]
-* https://github.com/redhat-developer-demos/istio-bonjour[Bonjour]
-* https://github.com/redhat-developer-demos/istio-aloha[Aloha]
-* https://github.com/redhat-developer-demos/istio-hola[Hola]
-* https://github.com/redhat-developer-demos/istio-ola[Ola]
+* https://github.com/redhat-developer-demos/istio-api-gateway/blob/master/Istio_README.adoc[Api Gateway]
+* https://github.com/redhat-developer-demos/istio-bonjour/blob/master/Istio_README.adoc[Bonjour]
+* https://github.com/redhat-developer-demos/istio-aloha/blob/master/Istio_README.adoc[Aloha]
+* https://github.com/redhat-developer-demos/istio-hola/blob/master/Istio_README.adoc[Hola]
+* https://github.com/redhat-developer-demos/istio-ola/blob/master/Istio_README.adoc[Ola]
 
 [NOTE]
 ====
@@ -26,11 +26,29 @@ and deploying the application
 
 == Deploying
 
-If the docker image of the application is already available, the you can run the following commands to deploy them.
+=== Download and Tag Docker Images
+
+[code,sh]
+----
+docker pull kameshsampath/istio-hola:0.0.2
+docker tag kameshsampath/istio-hola:0.0.2 hola:0.0.2
+
+docker pull kameshsampath/istio-ola:0.0.2
+docker tag kameshsampath/istio-ola:0.0.2 ola:0.0.2
+
+docker pull kameshsampath/istio-aloha:0.0.2
+docker tag kameshsampath/istio-aloha:0.0.2 aloha:0.0.2
+
+docker pull kameshsampath/istio-bonjour:0.0.2
+docker tag kameshsampath/istio-bonjour:0.0.2 bonjour:0.0.2
+
+docker pull kameshsampath/istio-api-gateway:0.0.2
+docker tag kameshsampath/istio-api-gateway:0.0.2 api-gateway:0.0.2
+----
 
 [NOTE]
 ====
-The version of the application used is *0.0.1* if you have different tags then please edit
+The version of the application used is *0.0.2* if you have different tags then please edit
 link:./redhat-helloworld-msa-all.yaml[redhat-helloworld-msa-all.yaml] to match the right tag
 ====
 
@@ -38,17 +56,23 @@ link:./redhat-helloworld-msa-all.yaml[redhat-helloworld-msa-all.yaml] to match t
 
 [code,sh]
 ----
-istioctl kube-inject -f redhat-helloworld-msa-all.yaml -o istio-redhat-helloworld-msa-all.yaml <1>
-kubectl apply -f istio-redhat-helloworld-msa-all.yaml <2>
+kubectl apply -f istio-redhat-helloworld-msa-all.yaml <1>
 ----
 
-<1> This does update the kubernetes manifests the _kube-inject_ i.e. injecting the Istio related init-containers and
-sidecars in to the kubernetes deployment yaml found in link:.redhat-helloworld-msa-all.yaml[redhat-helloworld-msa-all.yaml]
-<2> Deploying application on to Kubernetes
+<1> Deploying application on to Kubernetes
 
 [NOTE]
 ====
-There is also a pre-configured link:./istio-redhat-helloworld-msa-all.yaml[istio-redhat-helloworld-msa-all.yaml] which can be used
-via `kubectl apply -f istio-redhat-helloworld-msa-all.yaml` to deploy all the applications together. This is just a convinience
-if you dont want to do kube-inject done in previous step
+Sometimes depending on the machine power and configuration - some pods might crash, in those cases pelase delete the pod for it to be recreated or you can refer to the `Istio_README.adoc` on each application to deploy them individually.
+
+If you deploy applications individually then you might need to create the ingress using  using `kubectl apply -f redhat-helloworld-msa-ingress.yaml` 
 ====
+
+=== Define Circuit Breaker
+
+[code,sh]
+----
+istioctl create -f circuit-breakers/ola-circuit-breaker-policy.yaml <1>
+----
+
+<1> Create a default route to ola:0.0.2 service and define the circuit breaker configuration for the same

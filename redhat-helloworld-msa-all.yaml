@@ -92,13 +92,13 @@ spec:
         - containerPort: 8080
         livenessProbe:
           httpGet:
-            path: /api/health
+            path: /health
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 10
         readinessProbe:
           httpGet:
-            path: /api/health
+            path: /health
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 10
@@ -243,13 +243,13 @@ spec:
         - containerPort: 8080
         livenessProbe:
           httpGet:
-            path: /api/health
+            path: /health
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 10
         readinessProbe:
           httpGet:
-            path: /api/health
+            path: /health
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 10
@@ -276,14 +276,6 @@ spec:
         backend:
           serviceName: bonjour
           servicePort: 8080
-      - path: /api/aloha
-        backend:
-          serviceName: aloha
-          servicePort: 8080
-      - path: /api/aloha-chaining
-        backend:
-          serviceName: aloha
-          servicePort: 8080
       - path: /api/ola
         backend:
           serviceName: ola
@@ -303,5 +295,13 @@ spec:
       - path: /api/hola-chaining
         backend:
           serviceName: hola
+          servicePort: 8080
+      - path: /api/aloha
+        backend:
+          serviceName: aloha
+          servicePort: 8080
+      - path: /api/aloha-chaining
+        backend:
+          serviceName: aloha
           servicePort: 8080
 
