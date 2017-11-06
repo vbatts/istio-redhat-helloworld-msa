@@ -40,7 +40,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xmx256m
         - name: AB_OFF
-        image: aloha:0.0.2
+        image: kameshsampath/istio-aloha:0.0.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -128,7 +128,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xmx256m
         - name: AB_OFF
-        image: api-gateway:0.0.2
+        image: kameshsampath/istio-api-gateway:0.0.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -205,7 +205,7 @@ spec:
     spec:
       containers:
       - name:  nodejs
-        image: bonjour:0.0.2
+        image: kameshsampath/istio-bonjour:0.0.2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -263,7 +263,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xmx256m
         - name: AB_OFF
-        image: hola:0.0.2
+        image: kameshsampath/istio-hola:0.0.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -351,7 +351,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Xmx64m -Xss128m
         - name: AB_OFF
-        image: ola:0.0.2
+        image: kameshsampath/istio-ola:0.0.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:

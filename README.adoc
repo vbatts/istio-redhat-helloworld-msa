@@ -10,7 +10,7 @@ In this demo we will use https://istio.io[Istio] as the Service Mesh framework
 
 * https://istio.io[Istio] is deployed and configured on the Kubernetes Cluster
 
-The following applications are built and the corresponding docker images are available:
+The following applications are built and the corresponding container images are available:
 
 * https://github.com/redhat-developer-demos/istio-api-gateway/blob/master/Istio_README.adoc[Api Gateway]
 * https://github.com/redhat-developer-demos/istio-bonjour/blob/master/Istio_README.adoc[Bonjour]
@@ -26,28 +26,6 @@ and deploying the application
 
 == Deploying
 
-=== Download and Tag Docker Images
-
-[code,sh]
-----
-eval $(minikube docker-env) <1>
-
-docker pull kameshsampath/istio-hola:0.0.2
-docker tag kameshsampath/istio-hola:0.0.2 hola:0.0.2
-
-docker pull kameshsampath/istio-ola:0.0.2
-docker tag kameshsampath/istio-ola:0.0.2 ola:0.0.2
-
-docker pull kameshsampath/istio-aloha:0.0.2
-docker tag kameshsampath/istio-aloha:0.0.2 aloha:0.0.2
-
-docker pull kameshsampath/istio-bonjour:0.0.2
-docker tag kameshsampath/istio-bonjour:0.0.2 bonjour:0.0.2
-
-docker pull kameshsampath/istio-api-gateway:0.0.2
-docker tag kameshsampath/istio-api-gateway:0.0.2 api-gateway:0.0.2
-----
-<1> make sure the docker images are pulled into kubernetes docker
 [NOTE]
 ====
 The version of the application used is *0.0.2* if you have different tags then please edit
