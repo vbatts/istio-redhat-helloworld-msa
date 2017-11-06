@@ -30,6 +30,8 @@ and deploying the application
 
 [code,sh]
 ----
+eval $(minikube docker-env) <1>
+
 docker pull kameshsampath/istio-hola:0.0.2
 docker tag kameshsampath/istio-hola:0.0.2 hola:0.0.2
 
@@ -45,7 +47,7 @@ docker tag kameshsampath/istio-bonjour:0.0.2 bonjour:0.0.2
 docker pull kameshsampath/istio-api-gateway:0.0.2
 docker tag kameshsampath/istio-api-gateway:0.0.2 api-gateway:0.0.2
 ----
-
+<1> make sure the docker images are pulled into kubernetes docker
 [NOTE]
 ====
 The version of the application used is *0.0.2* if you have different tags then please edit
